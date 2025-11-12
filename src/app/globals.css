@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: 210 100% 34%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 120 61% 34%;
+    --secondary-foreground: 0 0% 100%;
+    --tertiary: 51 100% 50%;
+    --tertiary-foreground: 0 0% 13%;
+    --danger: 348 83% 47%;
+    --danger-foreground: 0 0% 100%;
+    --background: 210 17% 98%;
+    --surface: 0 0% 100%;
+    --text-primary: 210 11% 15%;
+    --text-secondary: 210 9% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-gray-200;
+  }
+  body {
+    @apply bg-background text-text-primary;
+  }
+}
