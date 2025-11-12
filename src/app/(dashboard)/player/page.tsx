@@ -10,7 +10,7 @@ import { PlayerLog, DailyReflectionInput } from '@/types';
 import { generateRecoveryPlan } from '@/lib/services/aiService';
 import { calculateStreakData, generateFollowUpPrompt } from '@/lib/services/logProcessor';
 import { MOTIVATIONAL_MESSAGES } from '@/lib/constants';
-import { formatDate, getHealthColorHex } from '@/lib/utils';
+import { formatDate, getHealthColor, getHealthColorHex } from '@/lib/utils';
 import { Calendar, TrendingUp, Activity as ActivityIcon } from 'lucide-react';
 
 export default function PlayerDashboard() {
@@ -159,3 +159,50 @@ export default function PlayerDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Follow-Up Prompt */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Daily Check-In Prompt</CardTitle>
+          <CardDescription>{followUpPrompt}</CardDescription>
+        </CardHeader>
+      </Card>
+
+      {/* Past Logs */}
+      {logs.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Check-Ins</CardTitle>
+            <CardDescription>Your recent recovery reflections</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {logs.slice(0, 5).map((log) => (
+                <div
+                  key={log.id}
+                  className="cursor-pointer rounded-lg border p-4 hover:bg-gray-50"
+                  onClick={() => router.push(`/player/log/${log.id}`)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-text-primary">
+                        {formatDate(log.submitted_at)}
+                      </p>
+                      <p className="text-sm text-text-secondary">
+                        {log.reflection_text.substring(0, 100)}...
+                      </p>
+                    </div>
+                    <div
+                      className="h-4 w-4 rounded-full"
+                      style={{ backgroundColor: getHealthColorHex(getHealthColor(log.health_score)) }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}

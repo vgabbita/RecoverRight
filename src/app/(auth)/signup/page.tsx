@@ -30,52 +30,41 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      // Create auth user
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // Call our API route to handle signup (bypasses RLS)
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          role,
+          fullName,
+          age: parseInt(age),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create account');
+      }
+
+      // Sign in the user to establish session
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (authError) throw authError;
+      if (signInError) {
+        throw new Error('Account created but failed to sign in. Please try signing in manually.');
+      }
 
-      if (authData.user) {
-        // Wait for session to be established
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError) throw sessionError;
-        
-        // Ensure we have a session before proceeding
-        if (!session) {
-          // If no session, wait a bit and try again (for email confirmation flows)
-          await new Promise(resolve => setTimeout(resolve, 500));
-          const { data: { session: retrySession } } = await supabase.auth.getSession();
-          if (!retrySession) {
-            throw new Error('Session not established. Please check your email for confirmation.');
-          }
-        }
-
-        // Insert user with role
-        const { error: userError } = await supabase
-          .from('users')
-          .insert({
-            id: authData.user.id,
-            email: authData.user.email,
-            role: role,
-          });
-
-        if (userError) throw userError;
-
-        // Insert profile
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            user_id: authData.user.id,
-            full_name: fullName,
-            age: parseInt(age),
-          });
-
-        if (profileError) throw profileError;
-
+      // Redirect to dashboard
+      if (data.user?.role) {
+        router.push(`/${data.user.role}`);
+      } else {
         router.push(`/${role}`);
       }
     } catch (error: any) {
