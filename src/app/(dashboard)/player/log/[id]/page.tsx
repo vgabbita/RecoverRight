@@ -182,8 +182,8 @@ export default function LogDetailPage() {
         </Card>
       )}
 
-      {/* AI Recovery Plan */}
-      {aiInsight && (
+  {/* AI Recovery Plan - only show when a stored AI insight exists AND health score is below 70 */}
+  {aiInsight && log.health_score < 70 && (
         <>
           <Card>
             <CardHeader>

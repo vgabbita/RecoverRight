@@ -20,6 +20,7 @@ export default function PhysicianDashboard() {
   const router = useRouter();
   const supabase = createClient();
   const [players, setPlayers] = useState<PlayerWithLatestLog[]>([]);
+  const [conversations, setConversations] = useState<Array<{ id: number; player_id: string; player_name?: string; last_message_at?: string; unread?: number }>>([]);
   const [loading, setLoading] = useState(true);
   const [physicianName, setPhysicianName] = useState<string | null>(null);
   const [selectedPlayer, setSelectedPlayer] = useState<PlayerWithLatestLog | null>(null);
@@ -30,6 +31,10 @@ export default function PhysicianDashboard() {
 
   useEffect(() => {
     loadPlayers();
+  }, []);
+
+  useEffect(() => {
+    loadConversationsForPhysician();
   }, []);
 
   useEffect(() => {
@@ -133,6 +138,54 @@ export default function PhysicianDashboard() {
       console.error('Error loading players:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadConversationsForPhysician = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: convs } = await supabase
+        .from('conversations')
+        .select('id, player_id, last_message_at')
+        .eq('physician_id', user.id)
+        .order('last_message_at', { ascending: false });
+
+      if (!convs || convs.length === 0) {
+        setConversations([]);
+        return;
+      }
+
+      // Fetch player names for each conversation
+      const playerIds = convs.map((c: any) => c.player_id);
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('user_id, full_name')
+        .in('user_id', playerIds);
+
+      const convsWithNames: any[] = (convs as any[]).map((c) => ({
+        id: c.id,
+        player_id: c.player_id,
+        player_name: (profiles || []).find((p: any) => p.user_id === c.player_id)?.full_name,
+        last_message_at: c.last_message_at,
+      }));
+
+      // Get unread counts per conversation
+      for (const conv of convsWithNames) {
+        const { count } = await supabase
+          .from('messages')
+          .select('*', { count: 'exact', head: true })
+          .eq('conversation_id', conv.id)
+          .eq('read_by_recipient', false);
+
+        // count is messages unread by recipient; we want unread for physician (messages from player)
+        conv.unread = count || 0;
+      }
+
+      setConversations(convsWithNames);
+    } catch (error) {
+      console.error('Error loading conversations for physician:', error);
     }
   };
 
@@ -421,6 +474,46 @@ export default function PhysicianDashboard() {
         </div>
       </div>
 
+      {/* Conversations for physician */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageSquare className="h-5 w-5" />
+            Messages
+          </CardTitle>
+          <CardDescription>
+            Recent conversations with players
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {conversations.length === 0 ? (
+            <p className="text-text-secondary">No conversations yet.</p>
+          ) : (
+            <div className="space-y-2">
+              {conversations.map((conv) => (
+                <div
+                  key={conv.id}
+                  className="flex items-center justify-between rounded-lg border p-3 hover:bg-gray-50"
+                >
+                  <div className="flex-1">
+                    <p className="font-medium text-text-primary">{conv.player_name || 'Player'}</p>
+                    <p className="text-sm text-text-secondary">Last: {conv.last_message_at ? formatDateTime(conv.last_message_at) : '—'}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {conv.unread && conv.unread > 0 && (
+                      <span className="rounded-full bg-primary px-2 py-1 text-xs text-white">{conv.unread} new</span>
+                    )}
+                    <Button size="sm" onClick={() => router.push(`/physician/player/${conv.player_id}/chat`)}>
+                      Message
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Players List */}
       <Card>
         <CardHeader>
@@ -479,7 +572,18 @@ export default function PhysicianDashboard() {
                         <p className="mt-2 text-sm text-text-secondary">No check-ins yet</p>
                       )}
                     </div>
-                    <ChevronRight className="h-5 w-5 text-text-secondary" />
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/physician/player/${player.user_id}/chat`);
+                        }}
+                      >
+                        Message
+                      </Button>
+                      <ChevronRight className="h-5 w-5 text-text-secondary" />
+                    </div>
                   </div>
                 </div>
               ))}

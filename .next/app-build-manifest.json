@@ -11,16 +11,6 @@
       "static/chunks/main-app.js",
       "static/chunks/app/page.js"
     ],
-    "/(auth)/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(auth)/layout.js"
-    ],
-    "/(auth)/login/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(auth)/login/page.js"
-    ],
     "/(dashboard)/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -36,25 +26,40 @@
       "static/chunks/main-app.js",
       "static/chunks/app/api/logs/route.js"
     ],
-    "/(dashboard)/player/log/[id]/page": [
+    "/(auth)/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/(dashboard)/player/log/[id]/page.js"
+      "static/chunks/app/(auth)/layout.js"
     ],
-    "/(dashboard)/physician/page": [
+    "/(auth)/login/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/(dashboard)/physician/page.js"
+      "static/chunks/app/(auth)/login/page.js"
     ],
     "/(dashboard)/player/chat/[conversationId]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/(dashboard)/player/chat/[conversationId]/page.js"
     ],
+    "/(dashboard)/physician/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(dashboard)/physician/page.js"
+    ],
+    "/(dashboard)/physician/player/[playerId]/chat/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(dashboard)/physician/player/[playerId]/chat/page.js"
+    ],
     "/(dashboard)/coach/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/(dashboard)/coach/page.js"
+    ],
+    "/(dashboard)/player/log/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(dashboard)/player/log/[id]/page.js"
     ]
   }
 }

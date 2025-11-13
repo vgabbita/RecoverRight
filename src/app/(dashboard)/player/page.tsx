@@ -113,19 +113,13 @@ export default function PlayerDashboard() {
   const handleSubmitReflection = async (input: DailyReflectionInput) => {
     setSubmitting(true);
     try {
-      // Generate AI recovery plan
-      const aiResponse = await generateRecoveryPlan(input);
-
-      // Save to database
+      // Send the input to server; server will calculate health score and call Gemini only when needed
       const response = await fetch('/api/logs', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          input,
-          aiResponse,
-        }),
+        body: JSON.stringify({ input }),
       });
 
       if (response.ok) {
