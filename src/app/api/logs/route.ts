@@ -17,12 +17,12 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const playerId = searchParams.get('player_id') || user.id;
 
-    // Fetch player logs with AI insights
+    // Fetch player logs with AI insights (explicit relationship to avoid ambiguity)
     const { data: logs, error: logsError } = await supabase
       .from('player_logs')
       .select(`
         *,
-        ai_insights (*)
+        ai_insights!ai_insights_log_id_fkey(*)
       `)
       .eq('player_id', playerId)
       .order('submitted_at', { ascending: false });

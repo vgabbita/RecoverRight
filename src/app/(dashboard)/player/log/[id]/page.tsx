@@ -27,12 +27,12 @@ export default function LogDetailPage() {
     try {
       setLoading(true);
       
-      // Fetch log with AI insights
+      // Fetch log with AI insights (use explicit relationship name to avoid ambiguous embed)
       const { data: logData, error: logError } = await supabase
         .from('player_logs')
         .select(`
           *,
-          ai_insights (*)
+          ai_insights!ai_insights_log_id_fkey(*)
         `)
         .eq('id', logId)
         .single();

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import DailyReflectionForm from '@/components/player/DailyReflectionForm';
+import PainFrequencyChart from '@/components/dataViz/PainFrequencyChart';
 import { createClient } from '@/lib/supabase/client';
 import { PlayerLog, DailyReflectionInput } from '@/types';
 import { generateRecoveryPlan } from '@/lib/services/aiService';
@@ -23,13 +24,55 @@ export default function PlayerDashboard() {
   const [streakData, setStreakData] = useState({ currentStreak: 0, longestStreak: 0, totalLogs: 0 });
   const [followUpPrompt, setFollowUpPrompt] = useState('Tell me how you feel.');
   const [motivationalMessage, setMotivationalMessage] = useState('');
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+  const [firstConversationId, setFirstConversationId] = useState<number | null>(null);
 
   useEffect(() => {
     loadLogs();
     setMotivationalMessage(
       MOTIVATIONAL_MESSAGES[Math.floor(Math.random() * MOTIVATIONAL_MESSAGES.length)]
     );
+    loadConversations();
   }, []);
+
+  const loadConversations = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Get conversations for this player
+      const { data: conversations } = await supabase
+        .from('conversations')
+        .select('*')
+        .eq('player_id', user.id);
+
+      if (!conversations || conversations.length === 0) {
+        setUnreadMessagesCount(0);
+        setFirstConversationId(null);
+        return;
+      }
+
+      // Record first conversation id for quick access
+      setFirstConversationId(conversations[0].id);
+
+      // Count unread messages across conversations (messages sent by physician to player)
+      let totalUnread = 0;
+      for (const conv of conversations) {
+        const { count } = await supabase
+          .from('messages')
+          .select('*', { count: 'exact', head: true })
+          .eq('conversation_id', conv.id)
+          .eq('read_by_recipient', false)
+          .neq('sender_id', user.id);
+
+        totalUnread += count || 0;
+      }
+
+      setUnreadMessagesCount(totalUnread);
+    } catch (error) {
+      console.error('Error loading conversations:', error);
+    }
+  };
 
   const loadLogs = async () => {
     try {
@@ -103,10 +146,24 @@ export default function PlayerDashboard() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-text-primary">Dashboard</h1>
-        <Button onClick={() => setShowForm(true)} size="lg">
-          New Daily Check-In
-        </Button>
+            <h1 className="text-3xl font-bold text-text-primary">Dashboard</h1>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  if (firstConversationId) {
+                    router.push(`/player/chat/${firstConversationId}`);
+                  } else {
+                    router.push('/player');
+                  }
+                }}
+              >
+                Messages {unreadMessagesCount > 0 && `(${unreadMessagesCount})`}
+              </Button>
+              <Button onClick={() => setShowForm(true)} size="lg">
+                New Daily Check-In
+              </Button>
+            </div>
       </div>
 
       {/* Motivational Message */}
@@ -167,6 +224,19 @@ export default function PlayerDashboard() {
           <CardDescription>{followUpPrompt}</CardDescription>
         </CardHeader>
       </Card>
+
+      {/* Pain Frequency Visualization */}
+      {logs.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Pain Tracking</CardTitle>
+            <CardDescription>Frequency of pain locations over time</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <PainFrequencyChart logs={logs} />
+          </CardContent>
+        </Card>
+      )}
 
       {/* Past Logs */}
       {logs.length > 0 && (
