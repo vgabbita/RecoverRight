@@ -21,6 +21,7 @@ export default function PhysicianDashboard() {
   const supabase = createClient();
   const [players, setPlayers] = useState<PlayerWithLatestLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [physicianName, setPhysicianName] = useState<string | null>(null);
   const [selectedPlayer, setSelectedPlayer] = useState<PlayerWithLatestLog | null>(null);
   const [playerLogs, setPlayerLogs] = useState<PlayerLog[]>([]);
   const [loadingLogs, setLoadingLogs] = useState(false);
@@ -30,6 +31,27 @@ export default function PhysicianDashboard() {
   useEffect(() => {
     loadPlayers();
   }, []);
+
+  useEffect(() => {
+    loadPhysicianName();
+  }, []);
+
+  const loadPhysicianName = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('user_id', user.id)
+        .single();
+
+      if (profile?.full_name) setPhysicianName(profile.full_name);
+    } catch (error) {
+      console.error('Error loading physician profile name:', error);
+    }
+  };
 
   const loadPlayers = async () => {
     try {
@@ -394,7 +416,7 @@ export default function PhysicianDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary">Patient Dashboard</h1>
+          <h1 className="text-3xl font-bold text-text-primary">{physicianName ? `${physicianName}'s Dashboard` : 'Patient Dashboard'}</h1>
           <p className="text-text-secondary">Monitor and manage all registered players</p>
         </div>
       </div>

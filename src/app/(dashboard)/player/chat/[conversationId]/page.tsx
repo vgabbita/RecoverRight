@@ -35,6 +35,7 @@ export default function PlayerChatPage() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [physicianName, setPhysicianName] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -85,6 +86,27 @@ export default function PlayerChatPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       setCurrentUserId(user.id);
+
+      // Load conversation metadata to show physician name
+      try {
+        const { data: conversation } = await supabase
+          .from('conversations')
+          .select('*')
+          .eq('id', conversationId)
+          .single();
+
+        if (conversation && conversation.physician_id) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('full_name')
+            .eq('user_id', conversation.physician_id)
+            .single();
+
+          if (profile?.full_name) setPhysicianName(profile.full_name);
+        }
+      } catch (e) {
+        // non-fatal
+      }
 
       // Load messages
       const { data: messagesData } = await supabase
@@ -170,7 +192,7 @@ export default function PlayerChatPage() {
             Back
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-text-primary">Messages</h1>
+            <h1 className="text-2xl font-bold text-text-primary">{physicianName ? `Chat with ${physicianName}` : 'Messages'}</h1>
             <p className="text-sm text-text-secondary">Private conversation</p>
           </div>
         </div>

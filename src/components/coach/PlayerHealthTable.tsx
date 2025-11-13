@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, Fragment } from 'react';
 import { Profile, PlayerLog } from '@/types';
 import HealthIndicatorBadge from './HealthIndicatorBadge';
 import { formatDateTime } from '@/lib/utils';
@@ -98,10 +98,9 @@ export default function PlayerHealthTable({ players }: PlayerHealthTableProps) {
           {sortedPlayers.map((player) => {
             const isExpanded = expandedPlayerId === player.user_id;
             const hasLog = !!player.latestLog;
-
             return (
-              <>
-                <tr key={player.user_id} className="border-b hover:bg-gray-50">
+              <Fragment key={player.user_id}>
+                <tr className="border-b hover:bg-gray-50">
                   <td className="py-4 pr-4">
                     <div>
                       <p className="font-medium text-text-primary">{player.full_name}</p>
@@ -164,7 +163,7 @@ export default function PlayerHealthTable({ players }: PlayerHealthTableProps) {
                 
                 {/* Expanded Row */}
                 {isExpanded && hasLog && (
-                  <tr key={`${player.user_id}-expanded`} className="bg-gray-50">
+                  <tr className="bg-gray-50">
                     <td colSpan={5} className="px-4 py-6">
                       <div className="space-y-4">
                         <div>
@@ -214,7 +213,7 @@ export default function PlayerHealthTable({ players }: PlayerHealthTableProps) {
                     </td>
                   </tr>
                 )}
-              </>
+              </Fragment>
             );
           })}
         </tbody>

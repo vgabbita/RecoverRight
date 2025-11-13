@@ -2,12 +2,50 @@ import { NextRequest, NextResponse } from 'next/server';
 import { DailyReflectionInput, AIResponse } from '@/types';
 import { calculateHealthScore } from '@/lib/services/healthScoring';
 
+// Fallback generator when Gemini is unavailable
+function generateFallbackPlan(input: DailyReflectionInput): AIResponse {
+  const exercises = [] as any[];
+
+  // Simple heuristics based on reported pain locations and severity
+  if (input.pain_location_tags && input.pain_location_tags.length > 0) {
+    for (const loc of input.pain_location_tags.slice(0, 3)) {
+      exercises.push({
+        name: `Gentle mobility for ${loc}`,
+        duration: '5-8 minutes',
+        intensity: input.pain_severity_level >= 7 ? 'Low' : 'Low-Medium',
+        equipment: 'None',
+      });
+    }
+  } else {
+    exercises.push({ name: 'Full body mobility routine', duration: '8-10 minutes', intensity: 'Low-Medium', equipment: 'None' });
+  }
+
+  const nutritionRestPlan = {
+    hydration: 'Aim for 500-750 ml of water in the first 2 hours after check-in and 2-3L across the day depending on activity',
+    nutrition: ['Prioritize lean protein and complex carbs post-activity', 'Include anti-inflammatory foods like berries and fatty fish'],
+    rest: 'Aim for 7-9 hours of sleep and include short naps if energy is very low',
+  };
+
+  const healthScore = calculateHealthScore(input);
+
+  return {
+    mobilityPlan: { exercises },
+    nutritionRestPlan,
+    healthScore,
+  };
+}
 export async function POST(request: NextRequest) {
   try {
     const input: DailyReflectionInput = await request.json();
 
     // Format the prompt for Gemini
     const prompt = formatPromptForGemini(input);
+
+    // If GEMINI_API_KEY is not set, return a fallback deterministic plan
+    if (!process.env.GEMINI_API_KEY) {
+      const fallback = generateFallbackPlan(input);
+      return NextResponse.json(fallback);
+    }
 
     // Call Gemini API using gemini-2.5-flash-lite
     const geminiResponse = await fetch(
@@ -34,21 +72,25 @@ export async function POST(request: NextRequest) {
     );
 
     if (!geminiResponse.ok) {
-      throw new Error('Gemini API request failed');
+      console.error('Gemini API failed, returning fallback plan');
+      const fallback = generateFallbackPlan(input);
+      return NextResponse.json(fallback);
     }
 
     const geminiData = await geminiResponse.json();
-    const generatedText = geminiData.candidates[0].content.parts[0].text;
+    const generatedText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
 
     // Parse the JSON response from Gemini
     let aiPlan;
     try {
+      if (!generatedText) throw new Error('Empty Gemini response');
       // Remove markdown code blocks if present
       const cleanedText = generatedText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
       aiPlan = JSON.parse(cleanedText);
     } catch (parseError) {
-      console.error('Failed to parse Gemini response:', generatedText);
-      throw new Error('Invalid AI response format');
+      console.error('Failed to parse Gemini response, returning fallback:', parseError);
+      const fallback = generateFallbackPlan(input);
+      return NextResponse.json(fallback);
     }
 
     // Calculate health score

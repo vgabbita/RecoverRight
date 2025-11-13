@@ -23,10 +23,32 @@ export default function CoachDashboard() {
     activeToday: 0,
     averageStreak: 0,
   });
+  const [coachName, setCoachName] = useState<string | null>(null);
 
   useEffect(() => {
     loadPlayers();
   }, []);
+
+  useEffect(() => {
+    loadCoachName();
+  }, []);
+
+  const loadCoachName = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('user_id', user.id)
+        .single();
+
+      if (profile?.full_name) setCoachName(profile.full_name);
+    } catch (error) {
+      console.error('Error loading coach profile name:', error);
+    }
+  };
 
   const loadPlayers = async () => {
     try {
@@ -116,7 +138,7 @@ export default function CoachDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary">Team Overview</h1>
+          <h1 className="text-3xl font-bold text-text-primary">{coachName ? `${coachName}'s Team` : 'Team Overview'}</h1>
           <p className="text-text-secondary">Monitor player health and readiness</p>
         </div>
       </div>

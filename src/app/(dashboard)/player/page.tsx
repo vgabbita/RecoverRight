@@ -26,6 +26,7 @@ export default function PlayerDashboard() {
   const [motivationalMessage, setMotivationalMessage] = useState('');
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
   const [firstConversationId, setFirstConversationId] = useState<number | null>(null);
+  const [playerName, setPlayerName] = useState<string | null>(null);
 
   useEffect(() => {
     loadLogs();
@@ -33,7 +34,25 @@ export default function PlayerDashboard() {
       MOTIVATIONAL_MESSAGES[Math.floor(Math.random() * MOTIVATIONAL_MESSAGES.length)]
     );
     loadConversations();
+    loadProfileName();
   }, []);
+
+  const loadProfileName = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('user_id', user.id)
+        .single();
+
+      if (profile?.full_name) setPlayerName(profile.full_name);
+    } catch (error) {
+      console.error('Error loading player profile name:', error);
+    }
+  };
 
   const loadConversations = async () => {
     try {
@@ -145,8 +164,11 @@ export default function PlayerDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-text-primary">Dashboard</h1>
+  <div className="flex items-center justify-between">
+    <div>
+      <h1 className="text-3xl font-bold text-text-primary">{playerName ? `${playerName}'s Dashboard` : 'Dashboard'}</h1>
+      {playerName && <p className="text-text-secondary">Welcome back, {playerName.split(' ')[0]}.</p>}
+    </div>
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
