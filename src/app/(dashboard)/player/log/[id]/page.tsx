@@ -26,6 +26,16 @@ export default function LogDetailPage() {
   const loadLogDetail = async () => {
     try {
       setLoading(true);
+      const { data: aiData, error: aiError } = await supabase
+        .from("ai_insights")
+        .select("*")
+        .eq("id", logId)
+        .single();
+      if (aiError) {
+        console.error("Error fetching AI insight:", aiError);
+      } else {
+        setAiInsight(aiData);
+      }
       
       // Fetch log with AI insights (use explicit relationship name to avoid ambiguous embed)
       const { data: logData, error: logError } = await supabase
@@ -41,10 +51,9 @@ export default function LogDetailPage() {
 
       if (logData) {
         setLog(logData);
-        if (logData.ai_insights && logData.ai_insights.length > 0) {
-          setAiInsight(logData.ai_insights[0]);
-        }
       }
+      console.log("logData", logData)
+      console.log("aiData", aiData)
     } catch (error) {
       console.error('Error loading log detail:', error);
     } finally {
@@ -181,7 +190,7 @@ export default function LogDetailPage() {
           </CardContent>
         </Card>
       )}
-
+  
   {/* AI Recovery Plan - only show when a stored AI insight exists AND health score is below 70 */}
   {aiInsight && log.health_score < 70 && (
         <>

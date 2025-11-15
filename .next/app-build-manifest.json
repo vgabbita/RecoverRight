@@ -16,15 +16,10 @@
       "static/chunks/main-app.js",
       "static/chunks/app/(dashboard)/layout.js"
     ],
-    "/(dashboard)/player/page": [
+    "/(dashboard)/physician/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/(dashboard)/player/page.js"
-    ],
-    "/api/logs/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/logs/route.js"
+      "static/chunks/app/(dashboard)/physician/page.js"
     ],
     "/(auth)/layout": [
       "static/chunks/webpack.js",
@@ -36,30 +31,25 @@
       "static/chunks/main-app.js",
       "static/chunks/app/(auth)/login/page.js"
     ],
-    "/(dashboard)/player/chat/[conversationId]/page": [
+    "/(dashboard)/player/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/(dashboard)/player/chat/[conversationId]/page.js"
+      "static/chunks/app/(dashboard)/player/page.js"
     ],
-    "/(dashboard)/physician/page": [
+    "/api/logs/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/(dashboard)/physician/page.js"
-    ],
-    "/(dashboard)/physician/player/[playerId]/chat/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(dashboard)/physician/player/[playerId]/chat/page.js"
-    ],
-    "/(dashboard)/coach/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(dashboard)/coach/page.js"
+      "static/chunks/app/api/logs/route.js"
     ],
     "/(dashboard)/player/log/[id]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/(dashboard)/player/log/[id]/page.js"
+    ],
+    "/(dashboard)/player/chat/[conversationId]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(dashboard)/player/chat/[conversationId]/page.js"
     ]
   }
 }
