@@ -52,8 +52,6 @@ export default function LogDetailPage() {
       if (logData) {
         setLog(logData);
       }
-      console.log("logData", logData)
-      console.log("aiData", aiData)
     } catch (error) {
       console.error('Error loading log detail:', error);
     } finally {

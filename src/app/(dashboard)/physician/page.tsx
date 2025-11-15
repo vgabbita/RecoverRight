@@ -497,7 +497,6 @@ export default function PhysicianDashboard() {
                 >
                   <div className="flex-1">
                     <p className="font-medium text-text-primary">{conv.player_name || 'Player'}</p>
-                    <p className="text-sm text-text-secondary">Last: {conv.last_message_at ? formatDateTime(conv.last_message_at) : '—'}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     {conv.unread && conv.unread > 0 && (

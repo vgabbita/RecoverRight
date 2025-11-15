@@ -1,8 +1,7 @@
 {
   "/api/logs/route": "app/api/logs/route.js",
+  "/page": "app/page.js",
   "/(dashboard)/player/page": "app/(dashboard)/player/page.js",
-  "/(dashboard)/player/chat/[conversationId]/page": "app/(dashboard)/player/chat/[conversationId]/page.js",
   "/(dashboard)/player/log/[id]/page": "app/(dashboard)/player/log/[id]/page.js",
-  "/(dashboard)/physician/page": "app/(dashboard)/physician/page.js",
-  "/(auth)/login/page": "app/(auth)/login/page.js"
+  "/(dashboard)/player/chat/[conversationId]/page": "app/(dashboard)/player/chat/[conversationId]/page.js"
 }
