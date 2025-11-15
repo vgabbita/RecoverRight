@@ -318,7 +318,7 @@ export default function PhysicianPlayerChat() {
             </Button>
           </div>
           <p className="mt-2 text-xs text-text-secondary">
-            Press Enter to send, Shift+Enter for new line
+            Press Enter to send
           </p>
         </div>
       </Card>

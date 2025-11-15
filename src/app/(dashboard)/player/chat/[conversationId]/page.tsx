@@ -255,7 +255,7 @@ export default function PlayerChatPage() {
               <Send className="h-4 w-4" />
             </Button>
           </div>
-          <p className="mt-2 text-xs text-text-secondary">Press Enter to send, Shift+Enter for new line</p>
+          <p className="mt-2 text-xs text-text-secondary">Press Enter to send</p>
         </div>
       </Card>
     </div>
