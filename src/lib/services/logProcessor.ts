@@ -36,10 +36,8 @@ export function calculateStreakData(logs: PlayerLog[]): StreakData {
       if (dayDiff === 1) {
         // Consecutive day
         tempStreak++;
-        console.log('Temp Streak:', tempStreak);
         console.log(sortedLogs.indexOf(log));
         if (sortedLogs.indexOf(log) === 1) {
-          console.log('Hit1');
           currentStreak = tempStreak;
         }
       } else {
