@@ -7,3 +7,4 @@ node_modules
 database_schema.sql
 fix_signup_rls.sql
 next-env.d.ts
+recoverright_all_documentation.md
