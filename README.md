@@ -2,6 +2,8 @@
 
 A daily recovery check-in platform designed for MLB players, physicians, and coaches to collaborate on proactive injury prevention and performance management.
 
+Link to deployed website: https://recover-right-jet.vercel.app/ 
+
 ## What is RecoverRight?
 
 RecoverRight is a web application that brings together players, medical staff, and coaching teams in one unified platform for tracking and managing athlete recovery. Using AI-powered insights, the app helps players understand their body's needs and enables medical professionals to monitor team health in real-time.
@@ -22,7 +24,7 @@ Injury prevention in professional baseball requires constant communication and d
 - **AI Recovery Plans**: Receive personalized guidance on mobility work, hydration, nutrition, and sleep
 - **Progress Tracking**: View your recovery history with streak counts and visual progress graphs
 - **Smart Prompts**: Get diagnostic follow-up questions that reference your previous logs
-- **Direct Messaging**: Receive personalized advice and attachments from your physician
+- **Direct Messaging**: Receive personalized advice from your physician
 
 ### For Physicians
 - **Player Roster**: View all registered players and their recent health data
@@ -59,11 +61,17 @@ Injury prevention in professional baseball requires constant communication and d
 4. Send private messages with guidance or workout attachments
 5. Monitor patterns to identify emerging health concerns
 
+An account for the physician has already been created: 
+Email: physician@gmail.com
+Password: abc123
+
 ### For Coaches
 1. Log in to your dashboard
 2. Scan the **Player List** with color-coded health indicators
 3. Click on a player for detailed recovery information
 4. Use the visual indicators to understand overall player health and make game-day roster decisions
+Email: coach@gmail.com 
+Password: abc123
 
 ## Technology Stack
 

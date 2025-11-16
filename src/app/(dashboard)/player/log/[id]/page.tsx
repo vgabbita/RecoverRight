@@ -26,6 +26,7 @@ export default function LogDetailPage() {
   const loadLogDetail = async () => {
     try {
       setLoading(true);
+      // Get the AI response for the player's log
       const { data: aiData, error: aiError } = await supabase
         .from("ai_insights")
         .select("*")
