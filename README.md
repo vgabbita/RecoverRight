@@ -2,7 +2,8 @@
 
 A daily recovery check-in platform designed for MLB players, physicians, and coaches to collaborate on proactive injury prevention and performance management.
 
-Link to deployed website: https://recover-right-jet.vercel.app/ 
+Link to deployed website: https://recover-right-jet.vercel.app/ <br>
+Link to a short Youtube demo of the app: https://youtu.be/eWCpBxeV2WA?si=ucBTI5P3nTme9fjg <br>
 
 ## What is RecoverRight?
 
@@ -62,14 +63,16 @@ Injury prevention in professional baseball requires constant communication and d
 5. Monitor patterns to identify emerging health concerns
 
 An account for the physician has already been created: 
-Email: physician@gmail.com
-Password: abc123
+<br>Email: physician@gmail.com
+<br>Password: abc123
+<br> Multiple physician accounts can be created but only the first one will be able to message players
 
 ### For Coaches
 1. Log in to your dashboard
 2. Scan the **Player List** with color-coded health indicators
 3. Click on a player for detailed recovery information
 4. Use the visual indicators to understand overall player health and make game-day roster decisions
+<br>
 <br>Email: coach@gmail.com 
 <br>Password: abc123
 
