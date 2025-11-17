@@ -80,46 +80,44 @@ export async function POST(request: NextRequest) {
     let insightData = null;
 
     // Only call Gemini (via internal API route) and store an AI insight when health score is below 70
-    if (typeof healthScore === 'number' && healthScore < 70) {
-      try {
-        const geminiUrl = new URL('/api/gemini', request.url).toString();
-        const geminiResp = await fetch(geminiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(input),
-        });
+    try {
+      const geminiUrl = new URL('/api/gemini', request.url).toString();
+      const geminiResp = await fetch(geminiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(input),
+      });
 
-        if (geminiResp.ok) {
-          const aiResponse = await geminiResp.json();
+      if (geminiResp.ok) {
+        const aiResponse = await geminiResp.json();
 
-          // Insert AI insight
-          const { data: insertedInsight, error: insightError } = await supabase
-            .from('ai_insights')
-            .insert({
-              log_id: logData.id,
-              mobility_plan: aiResponse.mobilityPlan || aiResponse.mobility_plan || null,
-              nutrition_rest_plan: aiResponse.nutritionRestPlan || aiResponse.nutrition_rest_plan || null,
-            })
-            .select()
-            .single();
+        // Insert AI insight
+        const { data: insertedInsight, error: insightError } = await supabase
+          .from('ai_insights')
+          .insert({
+            log_id: logData.id,
+            mobility_plan: aiResponse.mobilityPlan || aiResponse.mobility_plan || null,
+            nutrition_rest_plan: aiResponse.nutritionRestPlan || aiResponse.nutrition_rest_plan || null,
+          })
+          .select()
+          .single();
 
-          if (insightError) {
-            console.error('Failed to insert AI insight:', insightError);
-          } else {
-            insightData = insertedInsight;
-
-            // Update log with ai_insight_id
-            await supabase
-              .from('player_logs')
-              .update({ ai_insight_id: insightData.id })
-              .eq('id', logData.id);
-          }
+        if (insightError) {
+          console.error('Failed to insert AI insight:', insightError);
         } else {
-          console.warn('Gemini route returned non-ok response; skipping AI insight');
+          insightData = insertedInsight;
+
+          // Update log with ai_insight_id
+          await supabase
+            .from('player_logs')
+            .update({ ai_insight_id: insightData.id })
+            .eq('id', logData.id);
         }
-      } catch (err) {
-        console.error('Error fetching AI plan:', err);
+      } else {
+        console.warn('Gemini route returned non-ok response; skipping AI insight');
       }
+    } catch (err) {
+      console.error('Error fetching AI plan:', err);
     }
 
     return NextResponse.json({
