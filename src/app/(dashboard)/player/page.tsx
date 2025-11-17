@@ -25,7 +25,6 @@ export default function PlayerDashboard() {
   const [followUpPrompt, setFollowUpPrompt] = useState('Tell me how you feel.');
   const [motivationalMessage, setMotivationalMessage] = useState('');
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
-  const [firstConversationId, setFirstConversationId] = useState<number | null>(null);
   const [playerName, setPlayerName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -67,12 +66,8 @@ export default function PlayerDashboard() {
 
       if (!conversations || conversations.length === 0) {
         setUnreadMessagesCount(0);
-        setFirstConversationId(null);
         return;
       }
-
-      // Record first conversation id for quick access
-      setFirstConversationId(conversations[0].id);
 
       // Count unread messages across conversations (messages sent by physician to player)
       let totalUnread = 0;
@@ -166,13 +161,7 @@ export default function PlayerDashboard() {
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
-                onClick={() => {
-                  if (firstConversationId) {
-                    router.push(`/player/chat/${firstConversationId}`);
-                  } else {
-                    router.push('/player');
-                  }
-                }}
+                onClick={() => router.push('/player/chat')}
               >
                 Messages {unreadMessagesCount > 0 && `(${unreadMessagesCount})`}
               </Button>

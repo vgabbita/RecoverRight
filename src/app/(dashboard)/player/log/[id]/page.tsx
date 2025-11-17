@@ -218,7 +218,7 @@ export default function LogDetailPage() {
                       <h3 className="mb-2 font-semibold text-text-primary">{exercise.name}</h3>
                       <div className="grid grid-cols-3 gap-4 text-sm">
                         <div>
-                          <p className="text-text-secondary">Duration</p>
+                          <p className="text-text-secondary">Duration (mins)</p>
                           <p className="font-medium text-text-primary">{exercise.duration}</p>
                         </div>
                         <div>
