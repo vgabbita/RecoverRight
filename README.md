@@ -70,8 +70,8 @@ Password: abc123
 2. Scan the **Player List** with color-coded health indicators
 3. Click on a player for detailed recovery information
 4. Use the visual indicators to understand overall player health and make game-day roster decisions
-Email: coach@gmail.com 
-Password: abc123
+<br>Email: coach@gmail.com 
+<br>Password: abc123
 
 ## Technology Stack
 

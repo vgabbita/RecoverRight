@@ -27,6 +27,7 @@ export default function LogDetailPage() {
     try {
       setLoading(true);
       // Get the AI response for the player's log
+      console.log(logId);
       const { data: aiData, error: aiError } = await supabase
         .from("ai_insights")
         .select("*")
