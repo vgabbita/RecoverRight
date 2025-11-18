@@ -23,12 +23,11 @@ export function calculateStreakData(logs: PlayerLog[]): StreakData {
     logDate.setHours(0, 0, 0, 0);
 
     if (!lastDate) {
-      // First log
-      currentStreak = 1;
+      // First log (most recent)
       tempStreak = 1;
       lastDate = logDate;
     } else {
-      // Check if this log is consecutive
+      // Check if this log is consecutive (exactly 1 day difference)
       const dayDiff = Math.floor(
         (lastDate.getTime() - logDate.getTime()) / (1000 * 60 * 60 * 24)
       );
@@ -36,11 +35,8 @@ export function calculateStreakData(logs: PlayerLog[]): StreakData {
       if (dayDiff === 1) {
         // Consecutive day
         tempStreak++;
-        if (sortedLogs.indexOf(log) === 1) {
-          currentStreak = tempStreak;
-        }
-      } else {
-        // Streak broken
+      } else if (dayDiff > 1) {
+        // Streak broken (skip at least 1 day)
         longestStreak = Math.max(longestStreak, tempStreak);
         tempStreak = 1;
       }
@@ -49,7 +45,9 @@ export function calculateStreakData(logs: PlayerLog[]): StreakData {
     }
   }
 
-  longestStreak = Math.max(longestStreak, tempStreak, currentStreak);
+  // Current streak is the streak from the most recent log
+  currentStreak = tempStreak;
+  longestStreak = Math.max(longestStreak, tempStreak);
 
   return {
     currentStreak,
