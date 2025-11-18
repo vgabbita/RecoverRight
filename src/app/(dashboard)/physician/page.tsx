@@ -499,9 +499,6 @@ export default function PhysicianDashboard() {
                     <p className="font-medium text-text-primary">{conv.player_name || 'Player'}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    {conv.unread && conv.unread > 0 && (
-                      <span className="rounded-full bg-primary px-2 py-1 text-xs text-white">{conv.unread} new</span>
-                    )}
                     <Button size="sm" onClick={() => router.push(`/physician/player/${conv.player_id}/chat`)}>
                       Message
                     </Button>
