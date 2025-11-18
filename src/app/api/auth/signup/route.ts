@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Use service role key to bypass RLS
-    // This key should be in your .env.local file as SUPABASE_SERVICE_ROLE_KEY
+    // This key is in .env.local file as SUPABASE_SERVICE_ROLE_KEY
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 

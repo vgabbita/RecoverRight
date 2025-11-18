@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     let insightData = null;
 
-    // Only call Gemini (via internal API route) and store an AI insight when health score is below 70
+     // Call Gemini API 
     try {
       const geminiUrl = new URL('/api/gemini', request.url).toString();
       const geminiResp = await fetch(geminiUrl, {

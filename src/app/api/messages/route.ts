@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Conversation ID required' }, { status: 400 });
     }
 
-    // Fetch messages with attachments
+    // Fetch messages
     const { data: messages, error: messagesError } = await supabase
       .from('messages')
       .select(`
@@ -77,7 +77,6 @@ export async function POST(request: NextRequest) {
       throw messageError;
     }
 
-    // If there's an attachment, insert it
     if (attachment_file_path && attachment_file_type) {
       const { error: attachmentError } = await supabase
         .from('message_attachments')
